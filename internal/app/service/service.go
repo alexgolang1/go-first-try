@@ -17,3 +17,7 @@ func New(r Repository) *Service {
 		repo: r,
 	}
 }
+
+func (srv *Service) GetIDSrv(id int) (*types.Model, error) {
+	return srv.repo.GetIDSrv(id)
+}

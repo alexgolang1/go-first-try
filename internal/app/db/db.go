@@ -23,9 +23,19 @@ func InitDB() *gorm.DB {
 	return db
 }
 
-func GetIDSrv(id int) (*types.Model, error) {
+type Repository struct {
+	db *gorm.DB
+}
+
+func NewRepo(database *gorm.DB) *Repository {
+	return &Repository{
+		db: database,
+	}
+}
+
+func (r *Repository) GetIDSrv(id int) (*types.Model, error) {
 	var person types.Model
-	if err := db.First(&person, "id = ?", id).Error; err != nil {
+	if err := r.db.First(&person, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	return &person, nil

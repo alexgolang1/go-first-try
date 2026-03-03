@@ -1,6 +1,7 @@
 package app
 
 import (
+	"back-api/internal/app/db"
 	"back-api/internal/app/endpoint"
 	"back-api/internal/app/service"
 
@@ -9,13 +10,15 @@ import (
 )
 
 type App struct {
+	repo *db.Repository
 	srv  *service.Service
 	end  *endpoint.Endpoint
 	echo *echo.Echo
 }
 
 func New(database *gorm.DB) *App {
-	serve := service.New(database)
+	repos := db.NewRepo(database)
+	serve := service.New(repos)
 	endpoin := endpoint.New(serve)
 	ech := echo.New()
 
