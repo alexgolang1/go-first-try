@@ -22,3 +22,11 @@ func InitDB() *gorm.DB {
 	}
 	return db
 }
+
+func GetIDSrv(id int) (*types.Model, error) {
+	var person types.Model
+	if err := db.First(&person, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &person, nil
+}

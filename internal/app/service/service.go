@@ -2,25 +2,18 @@ package service
 
 import (
 	"back-api/internal/app/types"
-
-	"gorm.io/gorm"
 )
 
+type Repository interface {
+	GetIDSrv(id int) (*types.Model, error)
+}
+
 type Service struct {
-	db *gorm.DB
+	repo Repository
 }
 
-func New(database *gorm.DB) *Service {
+func New(r Repository) *Service {
 	return &Service{
-		db: database,
+		repo: r,
 	}
-}
-
-func (srv *Service) GetIDSrv(id int) (*types.Model, error) {
-	var person types.Model
-
-	if err := srv.db.First(&person, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-	return &person, nil
 }
