@@ -9,7 +9,7 @@ import (
 )
 
 type App struct {
-	repo *db.Database
+	repo *db.DataBase
 	end  *endpoint.Endpoint
 	echo *echo.Echo
 }
@@ -26,6 +26,7 @@ func New(database *gorm.DB) *App {
 }
 
 func (app *App) Run() {
-	app.echo.GET("/anyurl/:id", app.end.ID)
+	app.echo.GET("/get/:id", app.end.ID)
+	app.echo.POST("/post", app.end.Create)
 	app.echo.Logger.Fatal(app.echo.Start(":8080"))
 }

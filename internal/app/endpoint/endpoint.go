@@ -10,6 +10,7 @@ import (
 
 type Repository interface {
 	GetID(id int) (*types.Model, error)
+	CreateUSER(name, surname string) error
 }
 
 type Endpoint struct {
@@ -34,4 +35,14 @@ func (end *Endpoint) ID(ctx echo.Context) error {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
 	return ctx.JSON(http.StatusOK, result)
+}
+
+func (end *Endpoint) Create(ctx echo.Context) error {
+	name := ctx.Param("Name")
+	surname := ctx.Param("Surname")
+	err := end.repo.CreateUSER(name, surname)
+	if err != nil {
+		return ctx.JSON(500, err)
+	}
+	return ctx.JSON(http.StatusCreated, nil)
 }
