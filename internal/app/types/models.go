@@ -1,17 +1,12 @@
 package types
 
 import (
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 type Model struct {
 	gorm.Model
-	ID      int
+	ID      int `gorm:"primaryKey"`
 	Name    string
 	Surname string
-}
-
-type RedisClient struct {
-	client *redis.Client
 }

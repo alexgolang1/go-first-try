@@ -33,25 +33,30 @@ func NewDbase(database *gorm.DB) *DataBase {
 	}
 }
 
-func (repo *DataBase) GetID(id int) (*types.Model, error) {
+func (repo *DataBase) GetUser(id int) (*types.Model, error) {
 	var person types.Model
-	if err := repo.db.First(&person, "id = ?", id).Error; err != nil {
+	if err := repo.db.First(&person, id).Error; err != nil {
 		return nil, err
 	}
 	return &person, nil
 }
 
-func (repo *DataBase) CreateUSER(name, surname string) error {
+func (repo *DataBase) CreateUser(name, surname string) error {
 	new_person := types.Model{
 		Name:    name,
 		Surname: surname,
 	}
 
-	err := repo.db.Create(&new_person).Error
+	return repo.db.Create(&new_person).Error
+}
 
-	if err != nil {
-		return err
-	}
+func (repo *DataBase) DeleteUser(id int) error {
+	return repo.db.Delete(&types.Model{}, id).Error
+}
 
-	return nil
+func (repo *DataBase) UpdateUser(id int, name, surname string) error {
+	return repo.db.Model(&types.Model{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"name":    name,
+		"surname": surname,
+	}).Error
 }
