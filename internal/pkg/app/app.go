@@ -1,22 +1,23 @@
 package app
 
 import (
-	"back-api/internal/app/db"
 	"back-api/internal/app/endpoint"
 	"back-api/internal/app/mw"
+	"back-api/internal/app/repository"
 
 	"github.com/labstack/echo/v4"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 type App struct {
-	repo *db.DataBase
+	repo *repository.Repository
 	end  *endpoint.Endpoint
 	echo *echo.Echo
 }
 
-func New(database *gorm.DB) *App {
-	repo := db.NewDbase(database)
+func New(database *gorm.DB, rdb *redis.Client) *App {
+	repo := repository.NewRepository(database, rdb)
 	end := endpoint.New(repo)
 	echo := echo.New()
 

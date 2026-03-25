@@ -1,12 +1,13 @@
 package main
 
 import (
-	"back-api/internal/app/db"
+	"back-api/internal/app/repository"
 	"back-api/internal/pkg/app"
 )
 
 func main() {
-	database := db.InitDB()
-	a := app.New(database)
+	database := repository.InitDB()
+	rdb := repository.InitRDB()
+	a := app.New(database, rdb)
 	a.Run()
 }

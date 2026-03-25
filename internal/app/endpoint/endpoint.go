@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"back-api/internal/app/types"
+	"context"
 	"net/http"
 	"strconv"
 
@@ -9,10 +10,10 @@ import (
 )
 
 type Repository interface {
-	GetUser(id int) (*types.Model, error)
+	GetUser(ctx context.Context, id int) (*types.Model, error)
 	CreateUser(name, surname string) error
 	DeleteUser(id int) error
-	UpdateUser(id int, name string, surname string) error
+	UpdateUser(ctx context.Context, person types.Model) error
 }
 
 type Endpoint struct {
@@ -27,12 +28,13 @@ func New(r Repository) *Endpoint {
 
 func (end *Endpoint) ID(ctx echo.Context) error {
 	idstr := ctx.Param("id")
+	var context context.Context
 	id, err := strconv.Atoi(idstr)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
 
-	result, err := end.repo.GetUser(id)
+	result, err := end.repo.GetUser(context, id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
@@ -63,13 +65,10 @@ func (end *Endpoint) Delete(ctx echo.Context) error {
 }
 
 func (end *Endpoint) Update(ctx echo.Context) error {
-	idstr := ctx.Param("id")
-	id, _ := strconv.Atoi(idstr)
+	var person types.Model
+	var context context.Context
 
-	name := ctx.Param("Name")
-	surname := ctx.Param("Surname")
-
-	if err := end.repo.UpdateUser(id, name, surname); err != nil {
+	if err := end.repo.UpdateUser(context, person); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.JSON(http.StatusOK, nil)
