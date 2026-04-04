@@ -48,7 +48,7 @@ func NewRepository(database *gorm.DB, rdb *redis.Client) *Repository {
 	}
 }
 
-func (repo *Repository) GetUser(ctx context.Context, id int) (*types.Model, error) {
+func (repo *Repository) GetUserByID(ctx context.Context, id int) (*types.Model, error) {
 	var person types.Model
 
 	// redis
@@ -56,7 +56,7 @@ func (repo *Repository) GetUser(ctx context.Context, id int) (*types.Model, erro
 	cacheKey := "user:" + convId
 
 	val, err := repo.rdb.Get(ctx, cacheKey).Result()
-	if err == nil {
+	if err == redis.Nil {
 		if err := json.Unmarshal([]byte(val), &person); err == nil {
 			return &person, nil
 		}
@@ -73,10 +73,21 @@ func (repo *Repository) GetUser(ctx context.Context, id int) (*types.Model, erro
 	return &person, nil
 }
 
-func (repo *Repository) CreateUser(name, surname string) error {
+func (repo *Repository) GetUserByEmail(ctx context.Context, email string) (*types.Model, error) {
+	var person types.Model
+
+	err := repo.db.WithContext(ctx).Where("email = ?", email).First(&person).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &person, nil
+}
+
+func (repo *Repository) CreateUser(pass, email string) error {
 	new_person := types.Model{
-		Name:    name,
-		Surname: surname,
+		Password: pass,
+		Email:    email,
 	}
 
 	return repo.db.Create(&new_person).Error

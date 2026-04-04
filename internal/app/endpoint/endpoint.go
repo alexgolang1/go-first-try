@@ -10,7 +10,7 @@ import (
 )
 
 type Repository interface {
-	GetUser(ctx context.Context, id int) (*types.Model, error)
+	GetUserByID(ctx context.Context, id int) (*types.Model, error)
 	CreateUser(name, surname string) error
 	DeleteUser(id int) error
 	UpdateUser(ctx context.Context, person types.Model) error
@@ -34,9 +34,9 @@ func (end *Endpoint) ID(ctx echo.Context) error {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
 
-	result, err := end.repo.GetUser(context, id)
+	result, err := end.repo.GetUserByID(context, id)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		return ctx.JSON(http.StatusBadRequest, err)
 	}
 	return ctx.JSON(http.StatusOK, result)
 }
